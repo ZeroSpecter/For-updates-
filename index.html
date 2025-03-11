@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Calculator</title>
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="MyWebSite" />
+<link rel="manifest" href="/site.webmanifest" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      direction: ltr;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 24px;
+      margin: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+    h2 {
+      color: #333333;
+      margin-bottom: 20px;
+    }
+    .operation-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .operation-option {
+      background-color: #e9ecef;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid #d1d1d1;
+      transition: background-color 0.3s;
+      font-size: 14px;
+    }
+    .operation-option input {
+      margin-right: 8px;
+    }
+    .operation-option:hover {
+      background-color: #dfe4e8;
+    }
+    input[type="number"] {
+      width: 92%;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      background-color: #fafafa;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #444444;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      margin-top: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #333333;
+    }
+    .result {
+      margin-top: 25px;
+      padding: 14px;
+      background-color: #f0f0f0;
+      color: #333333;
+      font-size: 18px;
+      text-align: center;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .note {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #555;
+    }
+
+.discount-option {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  font-size: 14px;
+}
+.discount-option label {
+  background-color: #e9ecef;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid #d1d1d1;
+  transition: background-color 0.3s;
+  text-align: center;
+  width: 100%;
+}
+.discount-option label:hover {
+  background-color: #dfe4e8;
+}
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="extras-calculator-En.html"><button>Go to Extras Calculator</button></a>
+    <h2>Tax Calculator</h2>
+
+    <label for="amount">Enter amount:</label>
+    <input type="number" id="amount">
+
+
+
+    <label>Select operation:</label>
+<div class="operation-options">
+  <label class="operation-option"><input type="radio" name="operation" value="115" checked> Remove 15% Tax</label>
+  <label class="operation-option"><input type="radio" name="operation" value="both"> Remove 15% & 5% Tax</label>
+  <label class="operation-option"><input type="radio" name="operation" value="add15"> Add 15% Tax</label>
+  <label class="operation-option"><input type="radio" name="operation" value="addBoth"> Add 15% & 5% Tax</label>
+</div>
+
+<!-- Move Employee Discount Checkbox Below Operations -->
+<div class="discount-option">
+  <label><input type="checkbox" id="employeeDiscount"> Apply 20% Employee Discount</label>
+</div>
+    <button onclick="calculate()">Calculate</button>
+
+    <div class="result" id="result">-</div>
+    <div class="note" id="note"></div>
+  </div>
+
+  <script>
+    function formatNumber(num) {
+      if (num % 1 === 0) {
+        return num.toFixed(0);
+      }
+      return num.toFixed(2);
+    }
+
+    function calculate() {
+      var amount = parseFloat(document.getElementById('amount').value);
+      var operation = document.querySelector('input[name="operation"]:checked').value;
+      var applyDiscount = document.getElementById('employeeDiscount').checked;
+      var result, tax15, tax5, discountAmount = 0;
+      var originalAmount = amount;
+
+      if (!amount) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+
+      var noteText = "";
+
+      // Apply 20% Employee Discount if selected
+      if (applyDiscount) {
+        discountAmount = amount * 0.2;
+        amount = amount * 0.8;
+        noteText += "Employee Discount (20%): -" + formatNumber(discountAmount) + " SAR\n";
+        noteText += "Discounted Amount: " + formatNumber(amount) + " SAR\n";
+      }
+
+      if (operation === "115") {
+        result = (amount / 115) * 100;
+        tax15 = amount - result;
+        noteText += "15% Tax = " + formatNumber(tax15) + " SAR";
+      } else if (operation === "both") {
+        result = (amount / 115) * 100;
+        tax15 = amount - result;
+        result = (result / 105) * 100;
+        tax5 = amount - tax15 - result;
+        noteText += "15% Tax = " + formatNumber(tax15) + " SAR\n5% Tax = " + formatNumber(tax5) + " SAR";
+      } else if (operation === "add15") {
+        tax15 = amount * 0.15;
+        result = amount + tax15;
+        noteText += "15% Tax = " + formatNumber(tax15) + " SAR";
+      } else if (operation === "addBoth") {
+        tax15 = amount * 0.15;
+        result = amount + tax15;
+        tax5 = result * 0.05;
+        result = result + tax5;
+        noteText += "15% Tax = " + formatNumber(tax15) + " SAR\n5% Tax = " + formatNumber(tax5) + " SAR";
+      }
+
+      document.getElementById('result').innerText = formatNumber(result) + " SAR";
+      document.getElementById('note').innerText = noteText;
+    }
+  </script>
+
+</body>
+</html>
